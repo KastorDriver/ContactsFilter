@@ -21,7 +21,7 @@ public class ContactFilterController {
     ContactRepository contactRepository;
 
     @RequestMapping("/filter")
-    public ResponseEntity<Contacts> filter(@RequestParam(value = "filterName", required = true) String filterName) {
+    public ResponseEntity<Contacts> filter(@RequestParam(value = "filterName") String filterName) {
         List<Contact> contacts = new ArrayList<>();
         contactRepository.findAll().forEach(contact -> contacts.add(contact));
         return ResponseEntity.ok().body(new Contacts(contacts));
