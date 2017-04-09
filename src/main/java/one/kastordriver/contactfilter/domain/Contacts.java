@@ -2,8 +2,6 @@ package one.kastordriver.contactfilter.domain;
 
 import lombok.Data;
 
-import java.util.List;
-
 @Data
 public class Contacts {
 

@@ -14,9 +14,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
-import static org.hamcrest.Matchers.empty;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TrigramRegexContactFinderTest {
