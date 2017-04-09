@@ -27,3 +27,4 @@ nbdist/
 
 .vagrant
 Vagrantfile
+KastorDriver-test.box

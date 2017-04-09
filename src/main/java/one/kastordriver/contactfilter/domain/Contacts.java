@@ -7,9 +7,9 @@ import java.util.List;
 @Data
 public class Contacts {
 
-    private List<Contact> contacts;
+    private Iterable<Contact> contacts;
 
-    public Contacts(List<Contact> contacts) {
+    public Contacts(Iterable<Contact> contacts) {
         this.contacts = contacts;
     }
 }

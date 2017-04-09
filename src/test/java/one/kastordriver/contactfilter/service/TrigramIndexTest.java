@@ -1,33 +1,36 @@
 package one.kastordriver.contactfilter.service;
 
 import one.kastordriver.contactfilter.domain.Contact;
-import org.junit.Before;
+import one.kastordriver.contactfilter.repository.ContactRepository;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.empty;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.when;
 
-/**
- * Created by Kastor on 4/6/2017.
- */
-public class TrigramIndexCreatorTest {
+@RunWith(MockitoJUnitRunner.class)
+public class TrigramIndexTest {
 
-    private TrigramIndexCreator trigramIndexCreator;
+    @Mock
+    ContactRepository contactRepository;
 
-    @Before
-    public void before() {
-        trigramIndexCreator = new TrigramIndexCreator();
-    }
+    @InjectMocks
+    TrigramIndex trigramIndex = new TrigramIndex();
 
     @Test
     public void whenGetContactNameThenReturnSetOfTrigrams() {
-        Set<String> trigrams = trigramIndexCreator.prepareTrigrams("Adrian Smit");
+        Set<String> trigrams = trigramIndex.prepareTrigrams("Adrian Smit");
         assertThat(trigrams, containsInAnyOrder("Adr", "dri", "ria", "ian", "an ", "n S", " Sm", "Smi", "mit"));
     }
 
@@ -39,7 +42,7 @@ public class TrigramIndexCreatorTest {
                 Contact.builder().id(3).name("Robert Martin").build()
         );
 
-        Map<String, Set<Integer>> trigramIndex = trigramIndexCreator.createTrigramIndex(contacts);
+        Map<String, Set<Integer>> trigramIndex = this.trigramIndex.createTrigramIndex(contacts);
 
         assertThat(trigramIndex.get("Ken"), containsInAnyOrder(1));
         assertThat(trigramIndex.get("ent"), containsInAnyOrder(1));
@@ -68,5 +71,24 @@ public class TrigramIndexCreatorTest {
         assertThat(trigramIndex.get(" Ma"), containsInAnyOrder(3));
     }
 
+    @Test
+    public void whenGetRegexThenReturnOnlyNotCoincidingOccurences() {
+        List<Contact> contacts = Arrays.asList(
+                Contact.builder().id(1).name("Kent Beck").build(),
+                Contact.builder().id(2).name("Martin Fowler").build(),
+                Contact.builder().id(3).name("Robert Martin").build()
+        );
 
+        when(contactRepository.findAll()).thenReturn(contacts);
+        trigramIndex.init();
+
+        Pattern pattern = Pattern.compile("^Ke.*$");
+        assertThat(trigramIndex.computeRegexNotCoincidingOccurrences(pattern), containsInAnyOrder(2, 3));
+
+        pattern = Pattern.compile(".*Mar.*");
+        assertThat(trigramIndex.computeRegexNotCoincidingOccurrences(pattern), containsInAnyOrder(1));
+
+        pattern = Pattern.compile(".*e.*");
+        assertThat(trigramIndex.computeRegexNotCoincidingOccurrences(pattern), empty());
+    }
 }
