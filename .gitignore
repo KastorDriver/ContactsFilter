@@ -28,3 +28,4 @@ nbdist/
 .vagrant
 Vagrantfile
 KastorDriver-test.box
+RomanLoparev-test.box

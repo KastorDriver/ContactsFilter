@@ -1,7 +1,7 @@
 package one.kastordriver.contactfilter.controller;
 
 import one.kastordriver.contactfilter.domain.Contacts;
-import one.kastordriver.contactfilter.service.TrigramRegexContactFinder;
+import one.kastordriver.contactfilter.service.RegexContactFinder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 public class ContactFilterController {
 
     @Autowired
-    TrigramRegexContactFinder trigramRegexContactFinder;
+    RegexContactFinder trigramRegexContactFinder;
 
     @RequestMapping("/filter")
     public ResponseEntity<Contacts> filter(@RequestParam(value = "filterName") String filterName) {
